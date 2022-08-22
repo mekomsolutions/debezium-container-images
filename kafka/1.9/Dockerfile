@@ -1,4 +1,4 @@
-FROM debezium/base
+FROM zouchine/debezium-base
 
 LABEL maintainer="Debezium Community"
 

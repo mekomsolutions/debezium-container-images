@@ -1,4 +1,4 @@
-FROM debezium/connect-base:1.9
+FROM zouchine/debezium-connect-base
 
 LABEL maintainer="Debezium Community"
 

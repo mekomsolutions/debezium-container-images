@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-base:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}
+          password: ${{ secrets.DOCKER_HUB_REGISTRY_PASSWORD }}
+      - 
+        name: Get commit id
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./base/latest
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-base:${{ steps.vars.outputs.sha_short }},${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-base:latest
+
+  build-kafka:
+    needs: build-base
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}
+          password: ${{ secrets.DOCKER_HUB_REGISTRY_PASSWORD }}
+      - 
+        name: Get commit id
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./kafka/1.9/
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-kafka:${{ steps.vars.outputs.sha_short }},${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-kafka:latest
+
+  build-connect-base:
+    needs: build-kafka
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}
+          password: ${{ secrets.DOCKER_HUB_REGISTRY_PASSWORD }}
+      - 
+        name: Get commit id
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./connect-base/1.9/
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-connect-base:${{ steps.vars.outputs.sha_short }},${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-connect-base:latest
+
+  build-connect:
+    needs: build-connect-base
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}
+          password: ${{ secrets.DOCKER_HUB_REGISTRY_PASSWORD }}
+      - 
+        name: Get commit id
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./connect/1.9/
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-connect:${{ steps.vars.outputs.sha_short }},${{ secrets.DOCKER_HUB_REGISTRY_USER }}/debezium-connect:latest
