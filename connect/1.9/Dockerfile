@@ -23,3 +23,5 @@ RUN docker-maven-download debezium mongodb "$DEBEZIUM_VERSION" "$MONGODB_MD5" &&
     docker-maven-download debezium-additional db2 db2 "$DEBEZIUM_VERSION" "$DB2_MD5" && \
     docker-maven-download debezium-additional vitess vitess "$DEBEZIUM_VERSION" "$VITESS_MD5" && \
     docker-maven-download debezium-optional scripting "$DEBEZIUM_VERSION" "$SCRIPTING_MD5"
+
+COPY jars/TimestampConverter-1.2.4-SNAPSHOT.jar /kafka/connect/debezium-connector-mysql/TimestampConverter-1.2.4-SNAPSHOT.jar
