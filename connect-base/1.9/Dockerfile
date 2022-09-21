@@ -1,4 +1,4 @@
-FROM zouchine/debezium-kafka
+FROM mekomsolutions/debezium-kafka
 
 LABEL maintainer="Debezium Community"
 
