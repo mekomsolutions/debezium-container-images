@@ -1,4 +1,4 @@
-FROM debezium/base
+FROM mekomsolutions/debezium-base
 
 LABEL maintainer="Debezium Community"
 
